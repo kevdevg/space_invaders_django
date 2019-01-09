@@ -1,0 +1,27 @@
+{% load static %}
+<html>
+<head>
+	<script type="text/javascript" src="{% static 'js/spaceinvader.js'%}"></script>
+</head>
+<body>
+	<canvas id="spaceInvader" top="100" left="100" width="425" height="425"> </canvas>
+	<script type="text/javascript">
+		const load_img = path => new Promise((resolve) => {
+			let img = new Image();
+			img.onload = () => resolve(img);
+			img.src = path;
+		});
+		{% if ship %}
+			const ship_position = {x : {{ship.x_position}}, y : {{ship.y_position}}}
+		{% else %}
+			const ship_position = undefined;
+		{% endif %}
+		Promise.all([load_img("{% static 'assets/ship.png' %}"), load_img("{% static 'assets/invader.png' %}"), load_img("{% static 'assets/balas.png' %}")]).then(images => {
+			let [ship_img, invader_img, bullet_img] = images;
+			const game = new SpaceInvaders(document.getElementById("spaceInvader").getContext('2d'), ship_img, invader_img, bullet_img, "{% url 'save_ship_state' %}", ship_position);
+			window.onkeydown = game.keypress.bind(game);
+		});
+	</script>
+	<div>Icons made by <a href="https://www.flaticon.es/autores/those-icons" title="Those Icons">Those Icons</a> from <a href="https://www.flaticon.es/" 			    title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" 			    title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+</body>
+</html>
